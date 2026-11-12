@@ -22,6 +22,16 @@ The arm64 target builds native Apple Silicon host, helper, and widget binaries. 
 
 For macOS, Apple supports Team ID-prefixed App Groups without portal registration or provisioning-profile authorization. Both components must carry the same entitlement and use signatures from that team. The build derives the Team ID from the Apple Development certificate and verifies both signatures.
 
+After building, launch and manually validate each exact application bundle. Confirm that the host writes a newly fetched advice value, the WidgetKit extension reads and renders that same value, and the widget is present in the macOS gallery. Then bind the result to the signed executable CDHashes:
+
+```sh
+make record-runtime-arm64 CONFIRM_RUNTIME_VALIDATION=YES
+make record-runtime-universal CONFIRM_RUNTIME_VALIDATION=YES
+make package-all
+```
+
+The record targets reject missing, incorrectly signed, or architecturally incomplete bundles. `make package-all` packages the existing tested applications without rebuilding or re-signing them. `make clean` removes the validation stamps, so every clean release build requires new runtime validation.
+
 `make package-arm64` creates `Fucking_Advice_<version>_arm64.dmg`. `make package-universal` creates `Fucking_Advice_<version>_universal.dmg`. `make package-all` verifies and creates both after runtime validation. The images are not notarized. External distribution additionally requires a Developer ID Application certificate, hardened-runtime signing, `notarytool submit --wait`, and stapling. Never describe an artifact as notarized without a successful Apple notarization response.
 
 The application is distributed under `GPL-3.0-only`. Release artifacts must retain the complete `LICENSE` file in the application bundle. Source distributions must keep the repository-root copy.

@@ -27,7 +27,7 @@ APP_GROUP_ID ?= $(DEVELOPMENT_TEAM).fucking-advice-macos
 COMMON_XCODE_ARGS := -project $(PROJECT) -scheme $(SCHEME) -configuration $(CONFIGURATION) -jobs $(JOBS) MARKETING_VERSION=$(VERSION) HOST_BUNDLE_IDENTIFIER=$(BUNDLE_ID) WIDGET_BUNDLE_IDENTIFIER=$(BUNDLE_ID).Widgets APP_GROUP_ID=$(APP_GROUP_ID)
 SIGNED_XCODE_ARGS := $(COMMON_XCODE_ARGS) DEVELOPMENT_TEAM=$(DEVELOPMENT_TEAM)
 
-.PHONY: help preflight helper-arm64 helper-amd64 helper-universal build build-arm64 build-universal build-all build-unsigned run test lint package package-arm64 package-universal package-all clean
+.PHONY: help preflight helper-arm64 helper-amd64 helper-universal build build-arm64 build-universal build-all build-unsigned run test lint record-runtime-arm64 record-runtime-universal package package-arm64 package-universal package-all clean
 
 help:
 	@echo "Fucking Advice build targets"
@@ -39,8 +39,10 @@ help:
 	@echo "  make run              Launch the signed arm64 build"
 	@echo "  make test             Run Go and Swift unit tests"
 	@echo "  make lint             Formatting, vet, plist, and project checks"
+	@echo "  make record-runtime-arm64      Record completed manual runtime validation"
+	@echo "  make record-runtime-universal  Record completed manual runtime validation"
 	@echo "  make package          Alias for package-arm64"
-	@echo "  make package-all      Verify and package both signed variants"
+	@echo "  make package-all      Package both already-built, runtime-validated variants"
 	@echo "  make clean            Remove build products"
 
 preflight:
@@ -103,17 +105,37 @@ lint:
 
 package: package-arm64
 
-package-arm64: build-arm64
+record-runtime-arm64:
+	@test "$(CONFIRM_RUNTIME_VALIDATION)" = YES || { echo "error: complete the manual app/widget runtime checklist, then rerun with CONFIRM_RUNTIME_VALIDATION=YES" >&2; exit 2; }
+	@test -d '$(ARM64_APP)' || { echo "error: arm64 app is missing; run make build-arm64 first" >&2; exit 1; }
+	@APP_GROUP_ID='$(APP_GROUP_ID)' DEVELOPMENT_TEAM='$(DEVELOPMENT_TEAM)' scripts/check-bundle.sh '$(ARM64_APP)'
+	@scripts/check-architectures.sh '$(ARM64_APP)' arm64
+	@scripts/runtime-validation.sh record '$(ARM64_APP)' '$(ARM64_STAMP)'
+
+record-runtime-universal:
+	@test "$(CONFIRM_RUNTIME_VALIDATION)" = YES || { echo "error: complete the manual app/widget runtime checklist, then rerun with CONFIRM_RUNTIME_VALIDATION=YES" >&2; exit 2; }
+	@test -d '$(UNIVERSAL_APP)' || { echo "error: universal app is missing; run make build-universal first" >&2; exit 1; }
+	@APP_GROUP_ID='$(APP_GROUP_ID)' DEVELOPMENT_TEAM='$(DEVELOPMENT_TEAM)' scripts/check-bundle.sh '$(UNIVERSAL_APP)'
+	@scripts/check-architectures.sh '$(UNIVERSAL_APP)' arm64 x86_64
+	@scripts/runtime-validation.sh record '$(UNIVERSAL_APP)' '$(UNIVERSAL_STAMP)'
+
+package-arm64:
+	@test -d '$(ARM64_APP)' || { echo "error: arm64 app is missing; run make build-arm64 first" >&2; exit 1; }
+	@APP_GROUP_ID='$(APP_GROUP_ID)' DEVELOPMENT_TEAM='$(DEVELOPMENT_TEAM)' scripts/check-bundle.sh '$(ARM64_APP)'
+	@scripts/check-architectures.sh '$(ARM64_APP)' arm64
 	@scripts/runtime-validation.sh check '$(ARM64_APP)' '$(ARM64_STAMP)'
-	@test -f '$(ARM64_DMG)' || scripts/create-dmg.sh '$(ARM64_APP)' '$(ARM64_DMG)' '$(VERSION)' arm64
+	@scripts/create-dmg.sh '$(ARM64_APP)' '$(ARM64_DMG)' '$(VERSION)' arm64
 	@echo "Created $(ARM64_DMG) (not notarized)"
 
-package-universal: build-universal
+package-universal:
+	@test -d '$(UNIVERSAL_APP)' || { echo "error: universal app is missing; run make build-universal first" >&2; exit 1; }
+	@APP_GROUP_ID='$(APP_GROUP_ID)' DEVELOPMENT_TEAM='$(DEVELOPMENT_TEAM)' scripts/check-bundle.sh '$(UNIVERSAL_APP)'
+	@scripts/check-architectures.sh '$(UNIVERSAL_APP)' arm64 x86_64
 	@scripts/runtime-validation.sh check '$(UNIVERSAL_APP)' '$(UNIVERSAL_STAMP)'
-	@test -f '$(UNIVERSAL_DMG)' || scripts/create-dmg.sh '$(UNIVERSAL_APP)' '$(UNIVERSAL_DMG)' '$(VERSION)' universal
+	@scripts/create-dmg.sh '$(UNIVERSAL_APP)' '$(UNIVERSAL_DMG)' '$(VERSION)' universal
 	@echo "Created $(UNIVERSAL_DMG) (not notarized)"
 
 package-all: package-arm64 package-universal
 
 clean:
-	@rm -rf $(ARM64_DERIVED_DATA) $(UNIVERSAL_DERIVED_DATA) $(UNSIGNED_DERIVED_DATA) $(BUILD_DIR)/helpers $(BUILD_DIR)/FuckingAdvice.app $(BUILD_DIR)/FuckingAdvice_arm64.app $(BUILD_DIR)/FuckingAdvice_universal.app $(BUILD_DIR)/FuckingAdvice_UNSIGNED.app $(BUILD_DIR)/Fucking_Advice_*.dmg $(BUILD_DIR)/dmg-staging-*
+	@rm -rf $(ARM64_DERIVED_DATA) $(UNIVERSAL_DERIVED_DATA) $(UNSIGNED_DERIVED_DATA) $(BUILD_DIR)/helpers $(BUILD_DIR)/FuckingAdvice.app $(BUILD_DIR)/FuckingAdvice_arm64.app $(BUILD_DIR)/FuckingAdvice_universal.app $(BUILD_DIR)/FuckingAdvice_UNSIGNED.app $(BUILD_DIR)/Fucking_Advice_*.dmg $(BUILD_DIR)/dmg-staging-* $(ARM64_STAMP) $(UNIVERSAL_STAMP)

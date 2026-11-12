@@ -76,7 +76,9 @@ make build-unsigned    Build an unsigned arm64 diagnostic bundle
 make run               Build and open the signed arm64 app
 make test              Run Go and Swift core tests
 make lint              Check Go formatting/vet, plists, and the Xcode project
-make package-all       Verify and package both signed variants
+make record-runtime-arm64      Record completed arm64 runtime validation
+make record-runtime-universal  Record completed universal runtime validation
+make package-all       Package both built and validated variants without rebuilding
 make clean             Remove generated files under build/
 ```
 
@@ -129,9 +131,25 @@ The following checks require a signed app and a logged-in macOS GUI session:
 
 Record those results per macOS version. An Xcode build or SwiftUI preview does not establish runtime WidgetKit acceptance.
 
+After `make clean`, the release sequence is intentionally split so packaging cannot silently validate a binary that was never run:
+
+```sh
+make build-all
+
+# Run build/FuckingAdvice_arm64.app and complete the manual checks above.
+make record-runtime-arm64 CONFIRM_RUNTIME_VALIDATION=YES
+
+# Quit the arm64 build, run build/FuckingAdvice_universal.app, and repeat them.
+make record-runtime-universal CONFIRM_RUNTIME_VALIDATION=YES
+
+make package-all
+```
+
+The record targets verify signatures, entitlements, bundle structure, and architectures before binding the manual result to the executable CDHashes. `make package-all` does not rebuild or re-sign either application; it packages the exact binaries that were tested. `make clean` removes both runtime-validation stamps.
+
 ## Packaging and notarization
 
-`make package-arm64`, `make package-universal`, and `make package-all` create architecture-qualified DMGs. Each image contains the matching app and an Applications link. The targets verify executable architectures, nested code, signatures, App Group entitlements, and the variant-specific runtime fingerprint before packaging. They do not submit images to Apple.
+`make package-arm64`, `make package-universal`, and `make package-all` create architecture-qualified DMGs from existing builds. Each image contains the matching app and an Applications link. The targets verify executable architectures, nested code, signatures, App Group entitlements, and the variant-specific runtime fingerprint before packaging. They do not rebuild, re-sign, or submit images to Apple.
 
 Distribution outside the development Mac requires a Developer ID Application certificate, hardened-runtime signing, a successful `notarytool submit --wait`, and stapling. Keep certificates, private keys, provisioning profiles, API keys, and notary credentials outside the repository.
 
