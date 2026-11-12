@@ -1,0 +1,113 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A00100000000000000000001 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00100000000000000000001; };
+		A00100000000000000000002 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00100000000000000000002; };
+		A00100000000000000000003 /* WidgetCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00100000000000000000003; };
+		A00100000000000000000004 /* FetcherRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00100000000000000000004; };
+		A00100000000000000000005 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00100000000000000000005; };
+		A00100000000000000000006 /* FuckingAdviceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00100000000000000000006; };
+		A00100000000000000000007 /* OverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00100000000000000000007; };
+		A00100000000000000000008 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00100000000000000000008; };
+		A00200000000000000000001 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00100000000000000000001; };
+		A00200000000000000000002 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00100000000000000000002; };
+		A00200000000000000000003 /* WidgetCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00100000000000000000003; };
+		A00200000000000000000004 /* FuckingAdviceWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00100000000000000000009; };
+		A00300000000000000000001 /* FuckingAdviceWidgets.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B00200000000000000000002; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A00400000000000000000001 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = B00100000000000000000015; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C00100000000000000000001 = {isa = PBXContainerItemProxy; containerPortal = D00100000000000000000001 /* Project object */; proxyType = 1; remoteGlobalIDString = E00100000000000000000002; remoteInfo = FuckingAdviceWidgets; };
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F00100000000000000000001 /* Embed App Extensions */ = {isa = PBXCopyFilesBuildPhase; buildActionMask = 2147483647; dstPath = ""; dstSubfolderSpec = 13; files = (A00300000000000000000001 /* FuckingAdviceWidgets.appex in Embed App Extensions */, ); name = "Embed App Extensions"; runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		B00100000000000000000001 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		B00100000000000000000002 /* SharedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStore.swift; sourceTree = "<group>"; };
+		B00100000000000000000003 /* WidgetCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetCardView.swift; sourceTree = "<group>"; };
+		B00100000000000000000004 /* FetcherRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetcherRunner.swift; sourceTree = "<group>"; };
+		B00100000000000000000005 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		B00100000000000000000006 /* FuckingAdviceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuckingAdviceApp.swift; sourceTree = "<group>"; };
+		B00100000000000000000007 /* OverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayController.swift; sourceTree = "<group>"; };
+		B00100000000000000000008 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		B00100000000000000000009 /* FuckingAdviceWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuckingAdviceWidget.swift; sourceTree = "<group>"; };
+		B00100000000000000000010 /* App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "App-Info.plist"; sourceTree = "<group>"; };
+		B00100000000000000000011 /* Widget-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Widget-Info.plist"; sourceTree = "<group>"; };
+		B00100000000000000000012 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
+		B00100000000000000000013 /* Widget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Widget.entitlements; sourceTree = "<group>"; };
+		B00100000000000000000014 /* Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Development.xcconfig; sourceTree = "<group>"; };
+		B00100000000000000000015 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = ../LICENSE; sourceTree = SOURCE_ROOT; };
+		B00200000000000000000001 /* FuckingAdvice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FuckingAdvice.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B00200000000000000000002 /* FuckingAdviceWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FuckingAdviceWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F00200000000000000000001 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		F00200000000000000000002 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		G00100000000000000000001 = {isa = PBXGroup; children = (B00100000000000000000015, G00100000000000000000002, G00100000000000000000003, G00100000000000000000004, G00100000000000000000005, G00100000000000000000006, ); sourceTree = "<group>"; };
+		G00100000000000000000002 /* Shared */ = {isa = PBXGroup; children = (B00100000000000000000001, B00100000000000000000002, B00100000000000000000003, ); path = Shared; sourceTree = "<group>"; };
+		G00100000000000000000003 /* FuckingAdviceApp */ = {isa = PBXGroup; children = (G00100000000000000000007, G00100000000000000000008, G00100000000000000000009, G00100000000000000000010, ); path = FuckingAdviceApp; sourceTree = "<group>"; };
+		G00100000000000000000004 /* FuckingAdviceWidgets */ = {isa = PBXGroup; children = (B00100000000000000000009, ); path = FuckingAdviceWidgets; sourceTree = "<group>"; };
+		G00100000000000000000005 /* Config */ = {isa = PBXGroup; children = (B00100000000000000000010, B00100000000000000000011, B00100000000000000000012, B00100000000000000000013, B00100000000000000000014, ); path = Config; sourceTree = "<group>"; };
+		G00100000000000000000006 /* Products */ = {isa = PBXGroup; children = (B00200000000000000000001, B00200000000000000000002, ); name = Products; sourceTree = "<group>"; };
+		G00100000000000000000007 /* App */ = {isa = PBXGroup; children = (B00100000000000000000005, B00100000000000000000006, ); path = App; sourceTree = "<group>"; };
+		G00100000000000000000008 /* Services */ = {isa = PBXGroup; children = (B00100000000000000000004, ); path = Services; sourceTree = "<group>"; };
+		G00100000000000000000009 /* Settings */ = {isa = PBXGroup; children = (B00100000000000000000008, ); path = Settings; sourceTree = "<group>"; };
+		G00100000000000000000010 /* Overlay */ = {isa = PBXGroup; children = (B00100000000000000000007, ); path = Overlay; sourceTree = "<group>"; };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E00100000000000000000001 /* FuckingAdvice */ = {isa = PBXNativeTarget; buildConfigurationList = H00100000000000000000002; buildPhases = (F00300000000000000000001, F00400000000000000000001, F00200000000000000000001, F00500000000000000000001, F00100000000000000000001, ); buildRules = (); dependencies = (I00100000000000000000001, ); name = FuckingAdvice; productName = FuckingAdvice; productReference = B00200000000000000000001; productType = "com.apple.product-type.application"; };
+		E00100000000000000000002 /* FuckingAdviceWidgets */ = {isa = PBXNativeTarget; buildConfigurationList = H00100000000000000000003; buildPhases = (F00300000000000000000002, F00200000000000000000002, ); buildRules = (); dependencies = (); name = FuckingAdviceWidgets; productName = FuckingAdviceWidgets; productReference = B00200000000000000000002; productType = "com.apple.product-type.app-extension"; };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D00100000000000000000001 /* Project object */ = {isa = PBXProject; attributes = {BuildIndependentTargetsInParallel = YES; LastSwiftUpdateCheck = 2600; LastUpgradeCheck = 2600; TargetAttributes = {E00100000000000000000001 = {CreatedOnToolsVersion = 26.0; }; E00100000000000000000002 = {CreatedOnToolsVersion = 26.0; }; }; }; buildConfigurationList = H00100000000000000000001; compatibilityVersion = "Xcode 16.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, Base, ); mainGroup = G00100000000000000000001; productRefGroup = G00100000000000000000006; projectDirPath = ""; projectRoot = ""; targets = (E00100000000000000000001, E00100000000000000000002, ); };
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F00500000000000000000001 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A00400000000000000000001 /* LICENSE in Resources */, ); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		F00400000000000000000001 /* Embed Go Helper */ = {isa = PBXShellScriptBuildPhase; alwaysOutOfDate = 1; buildActionMask = 2147483647; files = (); inputFileListPaths = (); inputPaths = ("$(ADVICE_FETCHER_PATH)", ); name = "Embed Go Helper"; outputFileListPaths = (); outputPaths = ("$(TARGET_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Helpers/advice-fetcher", ); runOnlyForDeploymentPostprocessing = 0; shellPath = /bin/sh; shellScript = "set -eu\n: \"${ADVICE_FETCHER_PATH:?ADVICE_FETCHER_PATH is required}\"\ndest=\"${TARGET_BUILD_DIR}/${CONTENTS_FOLDER_PATH}/Helpers\"\nmkdir -p \"$dest\"\ncp \"$ADVICE_FETCHER_PATH\" \"$dest/advice-fetcher\"\nchmod 755 \"$dest/advice-fetcher\"\nif [ \"${CODE_SIGNING_ALLOWED:-NO}\" = YES ] && [ -n \"${EXPANDED_CODE_SIGN_IDENTITY:-}\" ]; then\n  /usr/bin/codesign --force --sign \"$EXPANDED_CODE_SIGN_IDENTITY\" --options runtime \"$dest/advice-fetcher\"\nfi\n"; };
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F00300000000000000000001 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A00100000000000000000001, A00100000000000000000002, A00100000000000000000003, A00100000000000000000004, A00100000000000000000005, A00100000000000000000006, A00100000000000000000007, A00100000000000000000008, ); runOnlyForDeploymentPostprocessing = 0; };
+		F00300000000000000000002 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A00200000000000000000001, A00200000000000000000002, A00200000000000000000003, A00200000000000000000004, ); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		I00100000000000000000001 = {isa = PBXTargetDependency; target = E00100000000000000000002; targetProxy = C00100000000000000000001; };
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		J00100000000000000000001 = {isa = XCBuildConfiguration; baseConfigurationReference = B00100000000000000000014; buildSettings = {CLANG_ENABLE_MODULES = YES; }; name = Debug; };
+		J00100000000000000000002 = {isa = XCBuildConfiguration; baseConfigurationReference = B00100000000000000000014; buildSettings = {CLANG_ENABLE_MODULES = YES; }; name = Release; };
+		J00100000000000000000003 = {isa = XCBuildConfiguration; baseConfigurationReference = B00100000000000000000014; buildSettings = {CODE_SIGN_ENTITLEMENTS = Config/App.entitlements; INFOPLIST_FILE = Config/App-Info.plist; PRODUCT_BUNDLE_IDENTIFIER = "$(HOST_BUNDLE_IDENTIFIER)"; PRODUCT_NAME = FuckingAdvice; ADVICE_FETCHER_PATH = "$(SRCROOT)/../build/advice-fetcher"; }; name = Debug; };
+		J00100000000000000000004 = {isa = XCBuildConfiguration; baseConfigurationReference = B00100000000000000000014; buildSettings = {CODE_SIGN_ENTITLEMENTS = Config/App.entitlements; INFOPLIST_FILE = Config/App-Info.plist; PRODUCT_BUNDLE_IDENTIFIER = "$(HOST_BUNDLE_IDENTIFIER)"; PRODUCT_NAME = FuckingAdvice; ADVICE_FETCHER_PATH = "$(SRCROOT)/../build/advice-fetcher"; }; name = Release; };
+		J00100000000000000000005 = {isa = XCBuildConfiguration; baseConfigurationReference = B00100000000000000000014; buildSettings = {APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_ENTITLEMENTS = Config/Widget.entitlements; INFOPLIST_FILE = Config/Widget-Info.plist; PRODUCT_BUNDLE_IDENTIFIER = "$(WIDGET_BUNDLE_IDENTIFIER)"; PRODUCT_NAME = FuckingAdviceWidgets; SKIP_INSTALL = YES; }; name = Debug; };
+		J00100000000000000000006 = {isa = XCBuildConfiguration; baseConfigurationReference = B00100000000000000000014; buildSettings = {APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_ENTITLEMENTS = Config/Widget.entitlements; INFOPLIST_FILE = Config/Widget-Info.plist; PRODUCT_BUNDLE_IDENTIFIER = "$(WIDGET_BUNDLE_IDENTIFIER)"; PRODUCT_NAME = FuckingAdviceWidgets; SKIP_INSTALL = YES; }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		H00100000000000000000001 = {isa = XCConfigurationList; buildConfigurations = (J00100000000000000000001, J00100000000000000000002, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		H00100000000000000000002 = {isa = XCConfigurationList; buildConfigurations = (J00100000000000000000003, J00100000000000000000004, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		H00100000000000000000003 = {isa = XCConfigurationList; buildConfigurations = (J00100000000000000000005, J00100000000000000000006, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+	};
+	rootObject = D00100000000000000000001 /* Project object */;
+}

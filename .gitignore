@@ -1,0 +1,38 @@
+# Xcode
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xccheckout
+*.xcscmblueprint
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# Go
+coverage.out
+*.test
+
+# Project outputs
+/build/
+*.app
+*.appex
+*.dSYM
+*.zip
+*.dmg
+
+# macOS/editor
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Signing and credentials
+*.p12
+*.cer
+*.mobileprovision
+*.provisionprofile
+AuthKey_*.p8
+notarytool-profile*
