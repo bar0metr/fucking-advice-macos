@@ -4,7 +4,7 @@ set -euo pipefail
 action=${1:?record or check required}
 app=${2:?app path required}
 root=$(cd "$(dirname "$0")/.." && pwd)
-stamp="$root/build/runtime-validation.sha256"
+stamp=${3:-"$root/build/runtime-validation.sha256"}
 
 fingerprint() {
   for component in \

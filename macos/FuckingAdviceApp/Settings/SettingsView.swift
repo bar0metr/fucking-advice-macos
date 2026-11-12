@@ -20,9 +20,29 @@ private struct GeneralSettings: View {
         Form {
             Toggle("Launch at Login", isOn: Binding(get: { model.settings.launchAtLogin }, set: { model.setLaunchAtLogin($0) }))
             Toggle("Open Settings at launch", isOn: $model.settings.openSettingsAtLaunch).onChange(of: model.settings.openSettingsAtLaunch) { _, _ in model.saveSettings() }
+            Section("Automatic refresh") {
+                Toggle("Refresh advice automatically", isOn: $model.settings.automaticRefreshEnabled)
+                    .onChange(of: model.settings.automaticRefreshEnabled) { _, _ in model.saveSettings() }
+                Stepper(value: $model.settings.automaticRefreshIntervalMinutes, in: 5...1_440, step: 5) {
+                    LabeledContent("Interval", value: refreshIntervalText)
+                }
+                .disabled(!model.settings.automaticRefreshEnabled)
+                .onChange(of: model.settings.automaticRefreshIntervalMinutes) { _, _ in model.saveSettings() }
+                Text("The timer runs while the menu-bar app is running. It starts a new countdown after each interval and never retries a failed request.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
             LabeledContent("Status", value: model.status)
             Button("Reset All Settings") { model.settings = PresentationSettings(); model.saveSettings() }
         }.formStyle(.grouped)
+    }
+
+    private var refreshIntervalText: String {
+        let minutes = model.settings.automaticRefreshIntervalMinutes
+        if minutes < 60 { return "\(minutes) min" }
+        let hours = minutes / 60
+        let remainder = minutes % 60
+        return remainder == 0 ? "\(hours) hr" : "\(hours) hr \(remainder) min"
     }
 }
 
@@ -35,7 +55,7 @@ private struct AdviceSettings: View {
             LabeledContent("Last fetched", value: model.advice?.fetchedAt.formatted() ?? "Never")
             LabeledContent("API status", value: model.status)
             HStack { Button("Refresh Now") { model.refresh() }.disabled(model.isRefreshing); Button("Copy") { model.copyAdvice() } }
-            Text("The app fetches once per process launch and once per explicit Refresh Now action. It does not poll or retry automatically.").foregroundStyle(.secondary)
+            Text("The app fetches at process launch, after Refresh Now, and at the configured interval when automatic refresh is enabled. Failed requests are not retried.").foregroundStyle(.secondary)
         }.formStyle(.grouped)
     }
 }
@@ -123,18 +143,10 @@ private struct AboutView: View {
 
     var body: some View {
         VStack(spacing: 18) {
-            Image(systemName: "quote.bubble.fill")
-                .font(.system(size: 48, weight: .semibold))
-                .foregroundStyle(.white)
-                .frame(width: 88, height: 88)
-                .background(
-                    LinearGradient(
-                        colors: [Color(red: 0.24, green: 0.36, blue: 0.57), Color(red: 0.52, green: 0.65, blue: 0.84)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    in: RoundedRectangle(cornerRadius: 22, style: .continuous)
-                )
+            Image(nsImage: NSApp.applicationIconImage)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 96, height: 96)
                 .shadow(color: .black.opacity(0.18), radius: 10, y: 5)
 
             VStack(spacing: 4) {

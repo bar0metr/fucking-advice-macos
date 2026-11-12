@@ -1,8 +1,12 @@
+<p align="center">
+  <img src="docs/assets/app-icon.png" width="180" alt="Fucking Advice application icon">
+</p>
+
 # Fucking Advice for macOS
 
-Fucking Advice is a native menu-bar app for macOS 15 and newer. It fetches one random phrase when the host process starts, caches the result, and shows the same cached phrase in a desktop text overlay and WidgetKit widgets. A manual **Refresh Now** action starts one additional request.
+Fucking Advice is a native menu-bar app for macOS 15 and newer. It fetches one random phrase when the host process starts, caches the result, and shows the same cached phrase in a desktop text overlay and WidgetKit widgets. **Refresh Now** starts a manual request. An optional in-process timer can refresh the advice every 5 minutes to 24 hours.
 
-The app preserves Unicode text and profanity returned by `https://fucking-great-advice.ru/api/random`. It contains no analytics, accounts, polling, background refresh, audio playback, or wallpaper modification.
+The timer is disabled by default and runs only while the menu-bar process is alive. The app preserves Unicode text and profanity returned by `https://fucking-great-advice.ru/api/random`. It contains no analytics, accounts, background daemon, audio playback, or wallpaper modification.
 
 ## Components
 
@@ -12,6 +16,7 @@ The app preserves Unicode text and profanity returned by `https://fucking-great-
 | `advice-fetcher` in Go | HTTPS request, 8-second timeout, 64 KiB limit, JSON validation |
 | WidgetKit extension | Small, Medium, and Large widgets that read the App Group cache |
 | App Group files | One advice record plus widget and overlay settings |
+| Automatic refresh scheduler | Disabled-by-default process timer with a persisted 5–1,440 minute interval |
 
 The widget extension performs no network requests. The host launches the helper with `Process`, without a shell. Failed requests leave the last valid cache untouched.
 
@@ -41,12 +46,15 @@ Apply the same App Group entitlement to both targets. Do not register the Team I
 
 ```sh
 make help
-make build BUNDLE_ID=com.yourname.FuckingAdvice
+make build-arm64 BUNDLE_ID=com.yourname.FuckingAdvice
+make build-universal BUNDLE_ID=com.yourname.FuckingAdvice
 ```
 
-Version `0.1.1` lives in the `VERSION` variable in `Makefile`; the Xcode build receives the same value as `MARKETING_VERSION`. Override it with `make build VERSION=0.1.2 ...`.
+Version `0.1.1` lives in the `VERSION` variable in `Makefile`; the Xcode build receives the same value as `MARKETING_VERSION`. Override it with `make build-all VERSION=0.1.2 ...`.
 
-The signed app appears at `build/FuckingAdvice.app`. The symlink points into `build/DerivedData`, so repeated builds retain Xcode's incremental compilation cache. The build creates `build/Fucking_Advice_0.1.1.dmg` only after a runtime-validation stamp matches the exact host, helper, and widget binaries.
+`make build-arm64` creates the Apple Silicon app under `build/DerivedData-arm64` and updates `build/FuckingAdvice_arm64.app`. `build/FuckingAdvice.app` remains an arm64 compatibility symlink. `make build-universal` creates an `arm64 + x86_64` app under `build/DerivedData-universal` and updates `build/FuckingAdvice_universal.app`. Separate DerivedData directories preserve incremental compilation for both variants.
+
+The matching images are `build/Fucking_Advice_0.1.1_arm64.dmg` and `build/Fucking_Advice_0.1.1_universal.dmg`. Each variant has its own runtime-validation fingerprint. A changed binary withholds only its matching DMG until that exact app passes runtime validation.
 
 Use the compile-only target before signing setup:
 
@@ -54,26 +62,31 @@ Use the compile-only target before signing setup:
 make build-unsigned
 ```
 
-The unsigned target creates `build/FuckingAdvice_UNSIGNED.app` and `build/Fucking_Advice_0.1.1_UNSIGNED.dmg` in separate DerivedData. It prints a warning. Do not install it as acceptance evidence for WidgetKit or App Group behavior.
+The unsigned target creates `build/FuckingAdvice_UNSIGNED.app` and `build/Fucking_Advice_0.1.1_arm64_UNSIGNED.dmg` in separate DerivedData. It prints a warning. Do not install it as acceptance evidence for WidgetKit or App Group behavior.
 
 ## Commands
 
 ```text
 make help             List targets
-make build            Build and verify a signed app and widget extension
-make build-unsigned   Build an unsigned diagnostic bundle
-make run              Build and open the signed app
-make test             Run Go and Swift core tests
-make lint             Check Go formatting/vet, plists, and the Xcode project
-make package          Build and verify the versioned DMG
-make clean            Remove generated files under build/
+make build             Alias for the signed arm64 build
+make build-arm64       Build Apple Silicon app and gate its DMG
+make build-universal   Build arm64+x86_64 app and gate its DMG
+make build-all         Build both signed variants
+make build-unsigned    Build an unsigned arm64 diagnostic bundle
+make run               Build and open the signed arm64 app
+make test              Run Go and Swift core tests
+make lint              Check Go formatting/vet, plists, and the Xcode project
+make package-all       Verify and package both signed variants
+make clean             Remove generated files under build/
 ```
 
-The build compiles the Go helper with `-trimpath`, strips its symbol table, enables Swift whole-module optimization, removes dead code, reuses DerivedData, and builds independent Xcode targets in parallel. Set `ARCH=amd64` only for a separate Intel helper build. A universal release requires building both helper slices with `lipo` and building the Xcode targets for `arm64 x86_64`; the default targets the current Mac to keep development builds short.
+The build compiles each Go helper slice with `-trimpath`, strips its symbol table, and combines the universal helper with `lipo`. Xcode builds the host and WidgetKit extension for the same requested architectures. `scripts/check-architectures.sh` rejects missing or extra slices in every bundled executable. Swift whole-module optimization, dead-code stripping, parallel target compilation, and per-variant DerivedData keep repeat builds short.
 
 ## Use
 
 Launch the app and open its quote-bubble menu-bar item. The menu shows a short phrase preview, refresh and copy actions, the desktop overlay toggle, Settings, and Quit.
+
+Settings → General controls automatic refresh. Enable **Refresh advice automatically**, then set the interval in five-minute increments. The timer stops when the app quits. A failed request does not trigger an immediate retry; the next attempt occurs after the next full interval.
 
 Add a native widget through macOS:
 
@@ -91,6 +104,7 @@ The desktop text overlay stays below ordinary app windows, ignores mouse events,
 - The host loads the last valid cache before networking.
 - A process-local state gate starts one request per host launch.
 - **Refresh Now** coalesces clicks while one request runs.
+- The optional timer uses the persisted interval, starts only when enabled, and coalesces with an in-flight request.
 - The Go client rejects redirects, non-HTTPS production endpoints, non-2xx responses, malformed JSON, invalid IDs, empty text, and bodies larger than 64 KiB.
 - The host commits a valid record with an ISO 8601 UTC timestamp, then reloads WidgetKit timelines.
 - Errors appear in the host status. The cache remains unchanged.
@@ -101,7 +115,7 @@ The host writes `advice.json` and `settings.json` through atomic file replacemen
 
 ## Tests
 
-`make test` runs Go tests against local TLS `httptest` servers. Cases cover Unicode preservation, unknown fields, malformed and oversized data, bad status, invalid records, timeout, and the one-request redirect policy. Swift package tests cover model defaults and corrupt-settings fallback.
+`make test` runs Go tests against local TLS `httptest` servers. Cases cover Unicode preservation, unknown fields, malformed and oversized data, bad status, invalid records, timeout, and the one-request redirect policy. Swift package tests cover model defaults, legacy-settings migration, and corrupt-settings fallback.
 
 The following checks require a signed app and a logged-in macOS GUI session:
 
@@ -117,7 +131,7 @@ Record those results per macOS version. An Xcode build or SwiftUI preview does n
 
 ## Packaging and notarization
 
-`make build` and `make package` create `build/Fucking_Advice_<version>.dmg`. The image contains the app and an Applications link. The target verifies nested code and App Group entitlements before packaging. It does not submit the image to Apple.
+`make package-arm64`, `make package-universal`, and `make package-all` create architecture-qualified DMGs. Each image contains the matching app and an Applications link. The targets verify executable architectures, nested code, signatures, App Group entitlements, and the variant-specific runtime fingerprint before packaging. They do not submit images to Apple.
 
 Distribution outside the development Mac requires a Developer ID Application certificate, hardened-runtime signing, a successful `notarytool submit --wait`, and stapling. Keep certificates, private keys, provisioning profiles, API keys, and notary credentials outside the repository.
 
@@ -165,6 +179,7 @@ internal/fetchprotocol/   stdout/stderr JSON contract
 macos/FuckingAdviceApp/   host app
 macos/FuckingAdviceWidgets/ WidgetKit extension
 macos/Shared/             shared Codable models and rendering
+macos/Assets.xcassets/    compiled macOS application icon
 macos/Config/             plists, entitlements, build configuration
 scripts/                  build, test, package, and bundle checks
 macos/Tests/              Swift core tests

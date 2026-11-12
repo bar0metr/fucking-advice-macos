@@ -14,6 +14,7 @@ final class AppModel: ObservableObject {
     private let store = SharedStore()
     private let runner = FetcherRunner()
     private var startupState: StartupState = .idle
+    private var automaticRefreshTask: Task<Void, Never>?
     private(set) lazy var overlay = OverlayController(model: self)
 
     init() { advice = store.loadAdvice(); settings = store.loadSettings() }
@@ -26,6 +27,7 @@ final class AppModel: ObservableObject {
         guard startupState == .idle else { return }
         startupState = .started; overlay.apply(settings.overlay.enabled)
         if settings.openSettingsAtLaunch { openSettings() }
+        configureAutomaticRefresh()
         refresh()
     }
 
@@ -45,8 +47,10 @@ final class AppModel: ObservableObject {
 
     func saveSettings() {
         do {
+            settings.automaticRefreshIntervalMinutes = min(max(settings.automaticRefreshIntervalMinutes, 5), 1_440)
             try store.saveSettings(settings)
             status = "Settings saved"; overlay.apply(settings.overlay.enabled); overlay.update()
+            configureAutomaticRefresh()
             WidgetCenter.shared.reloadTimelines(ofKind: widgetKind)
         } catch { status = error.localizedDescription }
     }
@@ -60,4 +64,22 @@ final class AppModel: ObservableObject {
 
     func copyAdvice() { NSPasteboard.general.clearContents(); NSPasteboard.general.setString(displayedText, forType: .string) }
 
+    private func configureAutomaticRefresh() {
+        automaticRefreshTask?.cancel()
+        automaticRefreshTask = nil
+        guard startupState == .started, settings.automaticRefreshEnabled else { return }
+
+        let nanoseconds = UInt64(settings.automaticRefreshIntervalMinutes) * 60 * 1_000_000_000
+        automaticRefreshTask = Task { [weak self] in
+            while !Task.isCancelled {
+                do {
+                    try await Task.sleep(nanoseconds: nanoseconds)
+                } catch {
+                    return
+                }
+                guard let self, !Task.isCancelled else { return }
+                self.refresh()
+            }
+        }
+    }
 }

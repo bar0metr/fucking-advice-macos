@@ -84,6 +84,28 @@ struct PresentationSettings: Codable, Equatable {
     var overlay = OverlaySettings()
     var launchAtLogin = false
     var openSettingsAtLaunch = false
+    var automaticRefreshEnabled = false
+    var automaticRefreshIntervalMinutes = 60
+
+    private enum CodingKeys: String, CodingKey {
+        case schemaVersion, widgetProfiles, overlay, launchAtLogin, openSettingsAtLaunch
+        case automaticRefreshEnabled, automaticRefreshIntervalMinutes
+    }
+
+    init() {}
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        schemaVersion = try values.decodeIfPresent(Int.self, forKey: .schemaVersion) ?? 1
+        widgetProfiles = try values.decodeIfPresent([String: WidgetProfile].self, forKey: .widgetProfiles)
+            ?? ["default": .default, "custom1": .custom1, "custom2": .custom2]
+        overlay = try values.decodeIfPresent(OverlaySettings.self, forKey: .overlay) ?? OverlaySettings()
+        launchAtLogin = try values.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? false
+        openSettingsAtLaunch = try values.decodeIfPresent(Bool.self, forKey: .openSettingsAtLaunch) ?? false
+        automaticRefreshEnabled = try values.decodeIfPresent(Bool.self, forKey: .automaticRefreshEnabled) ?? false
+        let interval = try values.decodeIfPresent(Int.self, forKey: .automaticRefreshIntervalMinutes) ?? 60
+        automaticRefreshIntervalMinutes = min(max(interval, 5), 1_440)
+    }
 }
 
 struct AdviceEnvelope: Codable { var schemaVersion = 1; var currentAdvice: AdviceRecord? }
